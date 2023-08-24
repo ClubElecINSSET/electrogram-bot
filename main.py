@@ -29,24 +29,17 @@ DB_CONFIG: dict[str, str] = {
     "host": os.environ.get("DB_HOST", "localhost"),
     "database": os.environ.get("DB_NAME", "electrogram"),
 }
-ATTACHMENTS_FOLDER: str = os.environ.get(
-    "ATTACHMENTS_FOLDER", "shared/attachments")
+ATTACHMENTS_FOLDER: str = os.environ.get("ATTACHMENTS_FOLDER", "shared/attachments")
 AVATARS_FOLDER: str = os.environ.get("AVATARS_FOLDER", "shared/avatars")
 FONT_FILE: str = os.environ.get("FONT_FILE", "fonts/VarelaRound-Regular.ttf")
 INPUT_LEVEL_IMG: str = os.environ.get("INPUT_LEVEL_IMG", "img/level_base.png")
-OUTPUT_LEVEL_FOLDER: str = os.environ.get(
-    "OUTPUT_LEVEL_FOLDER", "shared/levels")
-CUSTOM_EMOJIS_FOLDER: str = os.environ.get(
-    "CUSTOM_EMOJIS_FOLDER", "shared/emojis")
+OUTPUT_LEVEL_FOLDER: str = os.environ.get("OUTPUT_LEVEL_FOLDER", "shared/levels")
+CUSTOM_EMOJIS_FOLDER: str = os.environ.get("CUSTOM_EMOJIS_FOLDER", "shared/emojis")
 ALLOWED_IMG_EXTENSIONS: str = os.environ.get(
     "ALLOWED_IMG_EXTENSIONS", ".png,.jpg,.jpeg,.gif"
 )
-ALLOWED_VID_EXTENSIONS: str = os.environ.get(
-    "ALLOWED_VID_EXTENSIONS", ".mp4,.mov,.avi"
-)
-ALLOWED_AUD_EXTENSIONS: str = os.environ.get(
-    "ALLOWED_AUD_EXTENSIONS", ".mp3,.wav,.ogg"
-)
+ALLOWED_VID_EXTENSIONS: str = os.environ.get("ALLOWED_VID_EXTENSIONS", ".mp4,.mov,.avi")
+ALLOWED_AUD_EXTENSIONS: str = os.environ.get("ALLOWED_AUD_EXTENSIONS", ".mp3,.wav,.ogg")
 ALLOWED_EXTENSIONS = (
     ALLOWED_IMG_EXTENSIONS + ALLOWED_VID_EXTENSIONS + ALLOWED_AUD_EXTENSIONS
 )
@@ -54,8 +47,7 @@ ALLOWED_EXTENSIONS = (
 intents = discord.Intents.all()
 client: discord.Client = discord.Client(intents=intents)
 
-time: datetime.time = datetime.time(
-    hour=0, minute=00, tzinfo=ZoneInfo("Europe/Paris"))
+time: datetime.time = datetime.time(hour=0, minute=00, tzinfo=ZoneInfo("Europe/Paris"))
 
 
 def create_tables(cursor: mysql.connector.cursor.MySQLCursor) -> None:
@@ -123,6 +115,9 @@ async def get_reactions() -> dict:
         line.split("=")[0].strip(): line.split("=")[1].strip() for line in lines
     }
     return reactions
+
+
+reactions = await get_reactions()
 
 
 def detect_link(text: str) -> str:
@@ -195,8 +190,7 @@ def add_play_icon_to_thumbnail(thumbnail_path: str) -> None:
     play_icon = play_icon.resize((icon_size, icon_size))
     thumbnail.paste(
         play_icon,
-        (thumbnail.width // 2 - icon_size // 2,
-         thumbnail.height // 2 - icon_size // 2),
+        (thumbnail.width // 2 - icon_size // 2, thumbnail.height // 2 - icon_size // 2),
         play_icon,
     )
     thumbnail.save(thumbnail_path)
@@ -234,8 +228,7 @@ async def update_user_roles(
     guild = client.get_guild(GUILD_ID)
 
     if auto == False:
-        new_role = discord.utils.get(
-            user.roles, name=f"electrogram niveau {streak}")
+        new_role = discord.utils.get(user.roles, name=f"electrogram niveau {streak}")
         if new_role is None:
             new_role = discord.utils.get(
                 guild.roles, name=f"electrogram niveau {streak}"
@@ -330,7 +323,7 @@ def get_streak_message(display_name: str, streak: int, state: str) -> discord.Em
 
 def remove_accents(input: str):
     nfkd_form = unicodedata.normalize("NFKD", input)
-    return u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
+    return "".join([c for c in nfkd_form if not unicodedata.combining(c)])
 
 
 class OpenElectrogram(discord.ui.View):
@@ -338,8 +331,7 @@ class OpenElectrogram(discord.ui.View):
         super().__init__()
         url = f"{ELECTROGRAM_URL}/user/{username}"
         self.add_item(
-            discord.ui.Button(
-                label=f"Ouvrir l’electrogram de {display_name}", url=url)
+            discord.ui.Button(label=f"Ouvrir l’electrogram de {display_name}", url=url)
         )
 
 
@@ -356,8 +348,7 @@ async def on_ready() -> None:
             cursor = mydb.cursor()
             await update_user_profile(cursor, member)
             cursor.execute(
-                "SELECT last_message_date FROM streaks WHERE user_id = %s", (
-                    member.id,)
+                "SELECT last_message_date FROM streaks WHERE user_id = %s", (member.id,)
             )
             result = cursor.fetchone()
             if result is not None:
@@ -417,8 +408,7 @@ async def on_message(message: discord.Message) -> None:
                 )
                 await download_file(attachment.url, attachment_name)
                 sql = "INSERT INTO attachments (message_id, filename, type) VALUES (%s, %s, %s)"
-                val = (message.id, attachment_name,
-                       get_file_type(attachment_name))
+                val = (message.id, attachment_name, get_file_type(attachment_name))
                 cursor.execute(sql, val)
 
             try:
@@ -439,8 +429,7 @@ async def on_message(message: discord.Message) -> None:
                         "INSERT INTO streaks (user_id, streak, max_streak, last_message_date) VALUES (%s, %s, %s, %s)",
                         (message.author.id, streak, streak, today),
                     )
-                    streak_message = get_streak_message(
-                        display_name, streak, "new")
+                    streak_message = get_streak_message(display_name, streak, "new")
                     last_message_date = today
                 else:
                     streak, max_streak, last_message_date = result
@@ -452,8 +441,7 @@ async def on_message(message: discord.Message) -> None:
                             "UPDATE streaks SET streak = %s, max_streak = %s, last_message_date = %s WHERE user_id = %s",
                             (streak, max_streak, today, message.author.id),
                         )
-                        streak_message = get_streak_message(
-                            display_name, streak, "ok")
+                        streak_message = get_streak_message(display_name, streak, "ok")
                     elif last_message_date == today:
                         streak_message = get_streak_message(
                             display_name, streak, "again"
@@ -488,22 +476,21 @@ async def on_message(message: discord.Message) -> None:
                     value="Faites-le donc dans ce fil, c’est fait pour cela. :smile:",
                     inline=False,
                 )
-                embed.set_author(name=f"{display_name}",
-                                 icon_url=message.author.avatar)
+                embed.set_author(name=f"{display_name}", icon_url=message.author.avatar)
                 await thread.send(embed=embed)
                 await message.add_reaction("🚀")
-                reactions = await get_reactions()
                 added_reactions = set()
                 for pattern, reaction in reactions.items():
                     if (
-                        re.search(pattern, remove_accents(
-                            message.content.lower()))
+                        re.search(
+                            rf"\b{re.escape(pattern)}\b",
+                            remove_accents(message.content.lower()),
+                        )
                         and reaction not in added_reactions
                     ):
                         if reaction.startswith("<:") and reaction.endswith(">"):
                             emoji_id = int(reaction.split(":")[-1][:-1])
-                            emoji = discord.utils.get(
-                                client.emojis, id=emoji_id)
+                            emoji = discord.utils.get(client.emojis, id=emoji_id)
                             if emoji:
                                 await message.add_reaction(emoji)
                                 added_reactions.add(str(emoji))
@@ -574,8 +561,7 @@ async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent) -> None:
                 )
                 await download_file(attachment.url, attachment_name)
                 sql = "INSERT INTO attachments (message_id, filename, type) VALUES (%s, %s, %s)"
-                val = (message.id, attachment_name,
-                       get_file_type(attachment_name))
+                val = (message.id, attachment_name, get_file_type(attachment_name))
                 cursor.execute(sql, val)
 
             sql = "UPDATE messages SET content = %s WHERE id = %s"
@@ -583,21 +569,21 @@ async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent) -> None:
             cursor.execute(sql, val)
             mydb.commit()
 
-            reactions = await get_reactions()
             for reaction in message.reactions:
                 if reaction.me:
                     users = [user async for user in reaction.users()]
                     for user in users:
                         if user == client.user:
                             if isinstance(
-                                reaction.emoji, (discord.Emoji,
-                                                 discord.PartialEmoji)
+                                reaction.emoji, (discord.Emoji, discord.PartialEmoji)
                             ):
                                 emoji = str(reaction.emoji)
                             else:
                                 emoji = reaction.emoji
                             for pattern, reaction_pattern in reactions.items():
-                                if re.search(pattern, remove_accents(message.content.lower())):
+                                if re.search(
+                                    pattern, remove_accents(message.content.lower())
+                                ):
                                     if str(emoji) == str("🚀") or str(emoji) == str("❌"):
                                         break
                                     if reaction_pattern == emoji:
@@ -638,8 +624,7 @@ async def on_raw_message_delete(payload: discord.RawMessageDeleteEvent) -> None:
             mydb = mysql.connector.connect(**DB_CONFIG)
             cursor = mydb.cursor()
 
-            cursor.execute(
-                "SELECT user_id FROM messages WHERE id = %s", (message_id,))
+            cursor.execute("SELECT user_id FROM messages WHERE id = %s", (message_id,))
             result = cursor.fetchone()
             if result is None:
                 return
@@ -653,8 +638,7 @@ async def on_raw_message_delete(payload: discord.RawMessageDeleteEvent) -> None:
                 cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
 
             cursor.execute(
-                "SELECT filename FROM attachments WHERE message_id = %s", (
-                    message_id,)
+                "SELECT filename FROM attachments WHERE message_id = %s", (message_id,)
             )
             result = cursor.fetchall()
             for row in result:
@@ -666,8 +650,7 @@ async def on_raw_message_delete(payload: discord.RawMessageDeleteEvent) -> None:
             cursor.execute(
                 "DELETE FROM attachments WHERE message_id = %s", (message_id,)
             )
-            cursor.execute(
-                "DELETE FROM tags WHERE message_id = %s", (message_id,))
+            cursor.execute("DELETE FROM tags WHERE message_id = %s", (message_id,))
             mydb.commit()
             mydb.close()
     except Exception as e:
@@ -792,8 +775,7 @@ async def on_raw_reaction_clear(payload: discord.RawMessageDeleteEvent) -> None:
         if payload.channel_id == CHANNEL_ID:
             message_id = payload.message_id
 
-            cursor.execute(
-                "DELETE FROM tags WHERE message_id = %s", (message_id,))
+            cursor.execute("DELETE FROM tags WHERE message_id = %s", (message_id,))
             mydb.commit()
 
         mydb.close()
@@ -833,8 +815,7 @@ async def streak_update() -> None:
             mydb = mysql.connector.connect(**DB_CONFIG)
             cursor = mydb.cursor()
             cursor.execute(
-                "SELECT last_message_date FROM streaks WHERE user_id = %s", (
-                    member.id,)
+                "SELECT last_message_date FROM streaks WHERE user_id = %s", (member.id,)
             )
             result = cursor.fetchone()
             if result is not None:
