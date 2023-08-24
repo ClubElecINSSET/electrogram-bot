@@ -1,0 +1,75 @@
+[Unit]
+Description=club elec’s Discord bot for the electrogram service
+After=network.target
+
+[Service]
+Type=exec
+
+# environment variables
+Environment=HOME=/opt/electrogram-bot/
+Environment=SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+Environment=BOT_TOKEN=
+Environment=CHANNEL_ID=
+Environment=GUILD_ID=
+Environment=ELECTROGRAM_URL=https://electrogram.clubelec.org
+Environment=DB_USER=
+Environment=DB_PASSWORD=
+Environment=DB_HOST=
+Environment=DB_NAME=
+Environment=ATTACHMENTS_FOLDER=/opt/electrogram-bot/shared/attachments
+Environment=AVATARS_FOLDER=/opt/electrogram-bot/shared/avatars
+Environment=CUSTOM_EMOJIS_FOLDER=/opt/electrogram-bot/shared/emojis
+Environment=FONT_FILE=/opt/electrogram-bot/fonts/VarelaRound-Regular.ttf
+Environment=INPUT_LEVEL_IMG=/opt/electrogram-bot/img/level_base.png
+Environment=OUTPUT_LEVEL_FOLDER=/opt/electrogram-bot/shared/levels
+Environment=ALLOWED_IMG_EXTENSIONS=.png,.jpg,.jpeg,.gif
+Environment=ALLOWED_VID_EXTENSIONS=.mp4,.mov,.avi
+Environment=ALLOWED_AUD_EXTENSIONS=.mp3,.wav,.ogg
+
+# working directory and exec
+WorkingDirectory=/opt/electrogram-bot
+ExecStart=/opt/electrogram-bot/.env/bin/python3 main.py
+ExecStop=/usr/bin/kill -9 $MAINPID
+Restart=on-failure
+RestartSec=10s
+User=electrogram-bot
+Group=electrogram-bot
+
+# filesystem
+TemporaryFileSystem=/:ro
+BindReadOnlyPaths=/lib/ /lib64/ /usr/lib/ /usr/lib64/ /etc/ssl/certs/
+BindReadOnlyPaths=/usr/bin/python3 /usr/bin/python3.9 /usr/bin/kill
+BindPaths=/opt/electrogram-bot/
+PrivateTmp=true
+PrivateDevices=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectKernelLogs=true
+ReadWritePaths=
+
+# network
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+# misc
+SystemCallArchitectures=native
+SystemCallFilter=
+NoNewPrivileges=true
+RestrictRealtime=true
+MemoryDenyWriteExecute=true
+ProtectKernelLogs=true
+LockPersonality=true
+ProtectHostname=true
+RemoveIPC=true
+RestrictSUIDSGID=true
+ProtectClock=true
+ProtectProc=invisible
+
+# capabilities
+RestrictNamespaces=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
+
