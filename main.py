@@ -582,7 +582,8 @@ async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent) -> None:
                                 emoji = reaction.emoji
                             for pattern, reaction_pattern in reactions.items():
                                 if re.search(
-                                    pattern, remove_accents(message.content.lower())
+                                    rf"\b{re.escape(pattern)}\b",
+                                    remove_accents(message.content.lower()),
                                 ):
                                     if str(emoji) == str("🚀") or str(emoji) == str("❌"):
                                         break
