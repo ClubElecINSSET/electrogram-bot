@@ -1,5 +1,8 @@
 club elec=<:clubelec:1011351184214339665>
 club electronique insset=<:clubelec:1011351184214339665>
+electrogram=<:clubelecelectrogram:1143260279514345605>
+collabore=<:clubeleccollabore:1143260275898859531>
+navisphere=<:clubelecnavisphere:1143260284446855168>
 insset=<:insset:1135562244789391391>
 upjv=<:upjv:1135562233246646362>
 universite de picardie jules verne=<:upjv:1135562233246646362>
@@ -185,10 +188,10 @@ css=<:css:1143260931497918505>
 php=<:php:1143260985713508483>
 ruby=<:ruby:1143261482457509978>
 swift=<:swift:1143261011680428032>
-Kotlin=<:kotlin:1143260959721394176>
+kotlin=<:kotlin:1143260959721394176>
 mysql=<:mysql:1143260972719554570>
-postgresql:<:postgres:1143260988154585118>
-postgres:<:postgres:1143260988154585118>
+postgresql=<:postgres:1143260988154585118>
+postgres=<:postgres:1143260988154585118>
 matlab=<:matlab:1143525819315142768>
 arduino=<:arduino:1143526104578134097>
 raspberrypi=<:raspberrypi:1143260995683360768>
