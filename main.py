@@ -108,7 +108,7 @@ async def image_to_bytes(image_path: str) -> bytes:
         return image_file.read()
 
 
-async def get_reactions() -> dict:
+def get_reactions() -> dict:
     with open("reactions.txt", "r") as file:
         lines = file.readlines()
     reactions = {
@@ -117,7 +117,7 @@ async def get_reactions() -> dict:
     return reactions
 
 
-reactions = await get_reactions()
+reactions = get_reactions()
 
 
 def detect_link(text: str) -> str:
