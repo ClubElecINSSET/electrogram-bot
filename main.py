@@ -478,7 +478,6 @@ async def on_message(message: discord.Message) -> None:
                 )
                 embed.set_author(name=f"{display_name}", icon_url=message.author.avatar)
                 await thread.send(embed=embed)
-                await message.add_reaction("🚀")
                 added_reactions = set()
                 for pattern, reaction in reactions.items():
                     if (
@@ -585,7 +584,7 @@ async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent) -> None:
                                     rf"\b{re.escape(pattern)}\b",
                                     remove_accents(message.content.lower()),
                                 ):
-                                    if str(emoji) == str("🚀") or str(emoji) == str("❌"):
+                                    if str(emoji) == str("❌"):
                                         break
                                     if reaction_pattern == emoji:
                                         break
@@ -597,7 +596,7 @@ async def on_raw_message_edit(payload: discord.RawMessageUpdateEvent) -> None:
             added_reactions = set()
             for pattern, reaction in reactions.items():
                 if (
-                    re.search(pattern, remove_accents(message.content.lower()))
+                    re.search(rf"\b{re.escape(pattern)}\b", remove_accents(message.content.lower()))
                     and reaction not in added_reactions
                 ):
                     if reaction.startswith("<:") and reaction.endswith(">"):
@@ -661,7 +660,7 @@ async def on_raw_message_delete(payload: discord.RawMessageDeleteEvent) -> None:
 @client.event
 async def on_raw_reaction_add(payload: discord.RawReactionActionEvent) -> None:
     try:
-        if str(payload.emoji) == str("🚀") or str(payload.emoji) == str("❌"):
+        if str(payload.emoji) == str("❌"):
             return
         mydb = mysql.connector.connect(**DB_CONFIG)
         cursor = mydb.cursor()
@@ -714,7 +713,7 @@ async def on_raw_reaction_add(payload: discord.RawReactionActionEvent) -> None:
 @client.event
 async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent) -> None:
     try:
-        if str(payload.emoji) == str("🚀") or str(payload.emoji) == str("❌"):
+        if str(payload.emoji) == str("❌"):
             return
         mydb = mysql.connector.connect(**DB_CONFIG)
         cursor = mydb.cursor()
@@ -747,7 +746,7 @@ async def on_raw_reaction_clear_emoji(
     payload: discord.RawReactionClearEmojiEvent,
 ) -> None:
     try:
-        if str(payload.emoji) == str("🚀") or str(payload.emoji) == str("❌"):
+        if str(payload.emoji) == str("❌"):
             return
         mydb = mysql.connector.connect(**DB_CONFIG)
         cursor = mydb.cursor()
