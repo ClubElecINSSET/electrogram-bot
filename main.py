@@ -510,7 +510,7 @@ async def on_message(message: discord.Message) -> None:
                         "Coucou ! :wave:\nUne erreur est survenue... :sob:\nNous faisons tout notre possible pour résoudre ce problème\nRetentez dans quelques minutes."
                     )
                 mydb.close()
-                if days_difference != 0:
+                if result is None or days_difference != 0:
                     await update_user_roles(message.author, days_difference, streak)
     except Exception as e:
         print("Error in on_message:", e)
